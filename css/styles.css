@@ -1,0 +1,49 @@
+body {
+    font-family: 'Share Tech Mono', monospace, 'Courier New', Courier, monospace;
+    background: #111;
+    color: #33ff33;
+}
+
+.container {
+    background: #181818;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #33ff33;
+    padding: 30px;
+    margin: 40px auto;
+    max-width: 500px;
+}
+
+h1, h2, label {
+    font-family: 'Share Tech Mono', monospace;
+    color: #33ff33;
+    letter-spacing: 2px;
+}
+
+input, button {
+    font-family: 'Share Tech Mono', monospace;
+    background: #222;
+    color: #33ff33;
+    border: 1px solid #33ff33;
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+input:disabled {
+    background: #333;
+    color: #666;
+}
+
+.timer-display {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.timer-big {
+    font-size: 6em;
+    font-weight: bold;
+    color: #33ff33;
+    text-shadow: 0 0 20px #33ff33, 0 0 40px #33ff33;
+    letter-spacing: 0.1em;
+    transition: font-size 0.3s;
+}
