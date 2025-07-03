@@ -31,27 +31,62 @@ function goFullscreenOnTimer() {
     }
 }
 
+function showFullscreenOverlay() {
+    document.getElementById('fullscreen-timer-overlay').style.display = 'flex';
+    document.querySelector('.container').style.display = 'none';
+    document.querySelector('footer').style.display = 'none';
+}
+
+function hideFullscreenOverlay() {
+    document.getElementById('fullscreen-timer-overlay').style.display = 'none';
+    document.querySelector('.container').style.display = '';
+    document.querySelector('footer').style.display = '';
+}
+
+// Listen for fullscreen change to show/hide overlay
+document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement) {
+        showFullscreenOverlay();
+    } else {
+        hideFullscreenOverlay();
+    }
+});
+
+// Helper to update overlay timer value
+function updateFullscreenTimer(value) {
+    document.getElementById('fullscreen-main-timer').textContent = value;
+}
+
+// Helper to update main timer value and label
+function updateMainTimer(value, label) {
+    document.getElementById('main-timer').textContent = value;
+    document.getElementById('main-timer-label').textContent = label;
+}
+
 function startTotalTimer(duration, breakDuration) {
     let timer = duration;
-    const totalDisplay = document.getElementById("total-timer");
-    const breakDisplay = document.getElementById("break-timer");
-    breakDisplay.textContent = "00:00";
+    const mainTimer = document.getElementById("main-timer");
+    const mainLabel = document.getElementById("main-timer-label");
     isBreak = false;
 
     clearInterval(totalTimer);
     clearInterval(breakTimer);
 
     // Make timer text big
-    totalDisplay.classList.add("timer-big");
-    breakDisplay.classList.remove("timer-big");
+    mainTimer.classList.add("timer-big");
 
     // Go fullscreen on timer start
     goFullscreenOnTimer();
 
     speak("Countdown started!");
 
+    updateMainTimer(formatTime(timer), "Total Countdown:");
+    updateFullscreenTimer(formatTime(timer));
+
     totalTimer = setInterval(() => {
-        totalDisplay.textContent = formatTime(timer);
+        const formatted = formatTime(timer);
+        updateMainTimer(formatted, "Total Countdown:");
+        updateFullscreenTimer(formatted);
         if (--timer < 0) {
             clearInterval(totalTimer);
             if (breakDuration > 0) {
@@ -59,8 +94,7 @@ function startTotalTimer(duration, breakDuration) {
                 startBreakTimer(breakDuration);
             } else {
                 speak("Countdown finished! Well done.");
-                totalDisplay.classList.remove("timer-big");
-                // Exit fullscreen when finished
+                mainTimer.classList.remove("timer-big");
                 if (document.fullscreenElement) document.exitFullscreen();
             }
         }
@@ -69,24 +103,25 @@ function startTotalTimer(duration, breakDuration) {
 
 function startBreakTimer(duration) {
     let timer = duration;
-    const breakDisplay = document.getElementById("break-timer");
-    breakDisplay.textContent = formatTime(timer);
+    const mainTimer = document.getElementById("main-timer");
+    const mainLabel = document.getElementById("main-timer-label");
     isBreak = true;
 
-    // Make break timer text big
-    breakDisplay.classList.add("timer-big");
-    document.getElementById("total-timer").classList.remove("timer-big");
+    // Make timer text big
+    mainTimer.classList.add("timer-big");
 
-    totalDisplay = document.getElementById("total-timer");
+    updateMainTimer(formatTime(timer), "Break Time:");
+    updateFullscreenTimer(formatTime(timer));
 
     breakTimer = setInterval(() => {
-        breakDisplay.textContent = formatTime(timer);
+        const formatted = formatTime(timer);
+        updateMainTimer(formatted, "Break Time:");
+        updateFullscreenTimer(formatted);
         if (--timer < 0) {
             clearInterval(breakTimer);
             isBreak = false;
             speak("Break is over! Timer finished.");
-            breakDisplay.classList.remove("timer-big");
-            // Exit fullscreen when finished
+            mainTimer.classList.remove("timer-big");
             if (document.fullscreenElement) document.exitFullscreen();
         }
     }, 1000);

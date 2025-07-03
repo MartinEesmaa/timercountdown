@@ -47,3 +47,38 @@ input:disabled {
     letter-spacing: 0.1em;
     transition: font-size 0.3s;
 }
+
+#fullscreen-timer-overlay {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: #111;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+#fullscreen-timer-content {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#fullscreen-total-timer,
+#fullscreen-break-timer,
+#fullscreen-main-timer {
+    font-family: 'Share Tech Mono', monospace;
+    color: #33ff33;
+    font-size: 10vw;
+    text-shadow: 0 0 40px #33ff33, 0 0 80px #33ff33;
+    letter-spacing: 0.1em;
+    text-align: center;
+}

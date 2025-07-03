@@ -26,8 +26,14 @@
             <button id="start-timer">Start Timer</button>
         </div>
         <div class="timer-display">
-            <h2>Total Countdown: <span id="total-timer">00:00</span></h2>
-            <h2>Break Timer: <span id="break-timer">00:00</span></h2>
+            <h2 id="main-timer-label">Total Countdown:</h2>
+            <span id="main-timer">00:00</span>
+        </div>
+    </div>
+    <!-- Fullscreen overlay for timer -->
+    <div id="fullscreen-timer-overlay" style="display:none;">
+        <div id="fullscreen-timer-content">
+            <div id="fullscreen-main-timer">00:00</div>
         </div>
     </div>
     <footer style="text-align:center; margin-top:30px; color:#33ff33; font-family:'Share Tech Mono', monospace;">
