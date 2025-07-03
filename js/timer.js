@@ -182,13 +182,21 @@ document.getElementById("start-timer").addEventListener("click", function () {
     startTotalTimer(duration, breakDuration * 60);
 });
 
-// Disable/enable fields based on input
-const durationInput = document.getElementById("duration");
+const durationInputs = [
+    document.getElementById("duration-days"),
+    document.getElementById("duration-hours"),
+    document.getElementById("duration-minutes"),
+    document.getElementById("duration-seconds")
+];
 const startTimeInput = document.getElementById("start-time");
 const endTimeInput = document.getElementById("end-time");
 
+function anyDurationValue() {
+    return durationInputs.some(input => input.value && parseInt(input.value, 10) > 0);
+}
+
 function updateInputStates() {
-    if (durationInput.value) {
+    if (anyDurationValue()) {
         startTimeInput.disabled = true;
         endTimeInput.disabled = true;
     } else {
@@ -197,13 +205,13 @@ function updateInputStates() {
     }
 
     if (startTimeInput.value && endTimeInput.value) {
-        durationInput.disabled = true;
+        durationInputs.forEach(input => input.disabled = true);
     } else {
-        durationInput.disabled = false;
+        durationInputs.forEach(input => input.disabled = false);
     }
 }
 
-durationInput.addEventListener("input", updateInputStates);
+durationInputs.forEach(input => input.addEventListener("input", updateInputStates));
 startTimeInput.addEventListener("input", updateInputStates);
 endTimeInput.addEventListener("input", updateInputStates);
 
