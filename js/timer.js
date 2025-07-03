@@ -7,10 +7,19 @@ let breakTimer;
 let isBreak = false;
 
 // Helper to format time as MM:SS
-function formatTime(seconds) {
-    const m = String(Math.floor(seconds / 60)).padStart(2, '0');
-    const s = String(seconds % 60).padStart(2, '0');
-    return `${m}:${s}`;
+function formatTime(totalSeconds) {
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    let parts = [];
+    if (days > 0) parts.push(days + "d");
+    if (hours > 0 || days > 0) parts.push(String(hours).padStart(2, '0') + "h");
+    parts.push(String(minutes).padStart(2, '0') + "m");
+    parts.push(String(seconds).padStart(2, '0') + "s");
+
+    return parts.join(" ");
 }
 
 function speak(text) {
@@ -128,40 +137,41 @@ function startBreakTimer(duration) {
 }
 
 document.getElementById("start-timer").addEventListener("click", function () {
-    const durationInput = document.getElementById("duration").value;
+    // Get duration from new fields
+    const days = parseInt(document.getElementById("duration-days").value, 10) || 0;
+    const hours = parseInt(document.getElementById("duration-hours").value, 10) || 0;
+    const minutes = parseInt(document.getElementById("duration-minutes").value, 10) || 0;
+    const seconds = parseInt(document.getElementById("duration-seconds").value, 10) || 0;
     const breakInput = document.getElementById("breaks").value;
     const startTimeInput = document.getElementById("start-time").value;
     const endTimeInput = document.getElementById("end-time").value;
 
-    let duration = parseInt(durationInput, 10) || 0;
+    // Calculate total duration in seconds
+    let duration = days * 86400 + hours * 3600 + minutes * 60 + seconds;
     let breakDuration = parseInt(breakInput, 10) || 0;
 
-    // If start and end time are set, calculate duration
+    // If start and end time are set, calculate duration (overrides manual duration)
     if (startTimeInput && endTimeInput) {
         const [startH, startM] = startTimeInput.split(":").map(Number);
         const [endH, endM] = endTimeInput.split(":").map(Number);
         let start = startH * 60 + startM;
         let end = endH * 60 + endM;
         if (end < start) end += 24 * 60; // handle overnight
-        duration = end - start;
+        duration = (end - start) * 60; // convert minutes to seconds
 
-        // Get current time in minutes
+        // Wait logic as before...
         const now = new Date();
         const nowMinutes = now.getHours() * 60 + now.getMinutes();
-
-        // If start time is in the future, wait until then
         let waitMinutes = start - nowMinutes;
-        if (waitMinutes < 0) waitMinutes += 24 * 60; // handle overnight
-
+        if (waitMinutes < 0) waitMinutes += 24 * 60;
         if (waitMinutes > 0) {
             speak(`Timer will start at ${startTimeInput}. Waiting to begin.`);
             alert(`Timer will start at ${startTimeInput}.`);
             setTimeout(() => {
-                startTotalTimer(duration * 60, breakDuration * 60);
+                startTotalTimer(duration, breakDuration * 60);
             }, waitMinutes * 60 * 1000);
             return;
         }
-        // If start time is now or in the past, start immediately
     }
 
     if (duration <= 0) {
@@ -169,7 +179,7 @@ document.getElementById("start-timer").addEventListener("click", function () {
         return;
     }
 
-    startTotalTimer(duration * 60, breakDuration * 60);
+    startTotalTimer(duration, breakDuration * 60);
 });
 
 // Disable/enable fields based on input

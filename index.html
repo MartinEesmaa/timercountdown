@@ -11,8 +11,17 @@
     <div class="container">
         <h1>Countdown Timer (CTF version)</h1>
         <div class="timer-settings">
-            <label for="duration">Set Duration (minutes):</label>
-            <input type="number" id="duration" min="1" required>
+            <label>Set Duration:</label>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <input type="number" id="duration-days" min="0" placeholder="Days" style="width:60px;">
+                <span>d</span>
+                <input type="number" id="duration-hours" min="0" max="23" placeholder="Hours" style="width:60px;">
+                <span>h</span>
+                <input type="number" id="duration-minutes" min="0" max="59" placeholder="Minutes" style="width:70px;">
+                <span>m</span>
+                <input type="number" id="duration-seconds" min="0" max="59" placeholder="Seconds" style="width:70px;">
+                <span>s</span>
+            </div>
             
             <label for="start-time">Start Time:</label>
             <input type="time" id="start-time" required>
