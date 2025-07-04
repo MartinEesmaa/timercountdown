@@ -72,10 +72,21 @@ function updateMainTimer(value, label) {
     document.getElementById('main-timer-label').textContent = label;
 }
 
+// Helper to show a fullscreen message for 3 seconds, then callback
+function showFullscreenMessage(message, callback) {
+    const overlay = document.getElementById('fullscreen-timer-overlay');
+    const content = document.getElementById('fullscreen-timer-content');
+    content.innerHTML = `<div id="fullscreen-message" style="font-size:7vw;text-align:center;color:#33ff33;font-family:'Share Tech Mono',monospace;text-shadow:0 0 40px #33ff33,0 0 80px #33ff33;">${message}</div>`;
+    overlay.style.display = 'flex';
+    setTimeout(() => {
+        content.innerHTML = `<div id="fullscreen-main-timer">00:00</div>`;
+        if (callback) callback();
+    }, 3000);
+}
+
 function startTotalTimer(duration, breakDuration) {
     let timer = duration;
     const mainTimer = document.getElementById("main-timer");
-    const mainLabel = document.getElementById("main-timer-label");
     isBreak = false;
 
     clearInterval(totalTimer);
@@ -87,36 +98,47 @@ function startTotalTimer(duration, breakDuration) {
     // Go fullscreen on timer start
     goFullscreenOnTimer();
 
-    speak("Competition starts");
+    // Show COMPETITION STARTS message for 3 seconds, then start timer
+    showFullscreenMessage("COMPETITION STARTS", () => {
+        speak("Competition starts");
+        updateMainTimer(formatTime(timer), "Total Countdown:");
+        updateFullscreenTimer(formatTime(timer));
 
-    updateMainTimer(formatTime(timer), "Total Countdown:");
-    updateFullscreenTimer(formatTime(timer));
-
-    totalTimer = setInterval(() => {
-        const formatted = formatTime(timer);
-        updateMainTimer(formatted, "Total Countdown:");
-        updateFullscreenTimer(formatted);
-        if (--timer < 0) {
-            clearInterval(totalTimer);
-            if (breakDuration > 0) {
-                speak("Competition is suspended! Break started!");
-                startBreakTimer(breakDuration);
-            } else {
-                speak("End of Competition");
-                mainTimer.classList.remove("timer-big");
-                if (document.fullscreenElement) document.exitFullscreen();
+        // Now start the timer interval AFTER the message
+        totalTimer = setInterval(() => {
+            const formatted = formatTime(timer);
+            updateMainTimer(formatted, "Total Countdown:");
+            updateFullscreenTimer(formatted);
+            if (--timer < 0) {
+                clearInterval(totalTimer);
+                if (breakDuration > 0) {
+                    speak("Competition is suspended! Break started!");
+                    showFullscreenMessage("BREAK TIME", () => {
+                        startBreakTimer(breakDuration);
+                    });
+                } else {
+                    endCompetition();
+                }
             }
-        }
-    }, 1000);
+        }, 1000);
+    });
+}
+
+function endCompetition() {
+    // Show END OF COMPETITION message for 3 seconds, then exit fullscreen
+    showFullscreenMessage("END OF COMPETITION", () => {
+        speak("End of competition");
+        setTimeout(() => {
+            if (document.fullscreenElement) document.exitFullscreen();
+        }, 3000);
+    });
 }
 
 function startBreakTimer(duration) {
     let timer = duration;
     const mainTimer = document.getElementById("main-timer");
-    const mainLabel = document.getElementById("main-timer-label");
     isBreak = true;
 
-    // Make timer text big
     mainTimer.classList.add("timer-big");
 
     updateMainTimer(formatTime(timer), "Break Time:");
@@ -129,9 +151,7 @@ function startBreakTimer(duration) {
         if (--timer < 0) {
             clearInterval(breakTimer);
             isBreak = false;
-            speak("Competition is suspended! Break started!");
-            mainTimer.classList.remove("timer-big");
-            if (document.fullscreenElement) document.exitFullscreen();
+            endCompetition();
         }
     }, 1000);
 }
