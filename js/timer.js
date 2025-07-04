@@ -87,7 +87,7 @@ function startTotalTimer(duration, breakDuration) {
     // Go fullscreen on timer start
     goFullscreenOnTimer();
 
-    speak("Countdown started!");
+    speak("Competition starts");
 
     updateMainTimer(formatTime(timer), "Total Countdown:");
     updateFullscreenTimer(formatTime(timer));
@@ -99,10 +99,10 @@ function startTotalTimer(duration, breakDuration) {
         if (--timer < 0) {
             clearInterval(totalTimer);
             if (breakDuration > 0) {
-                speak("Break started!");
+                speak("Competition is suspended! Break started!");
                 startBreakTimer(breakDuration);
             } else {
-                speak("Countdown finished! Well done.");
+                speak("End of Competition");
                 mainTimer.classList.remove("timer-big");
                 if (document.fullscreenElement) document.exitFullscreen();
             }
@@ -129,7 +129,7 @@ function startBreakTimer(duration) {
         if (--timer < 0) {
             clearInterval(breakTimer);
             isBreak = false;
-            speak("Break is over! Timer finished.");
+            speak("Competition is suspended! Break started!");
             mainTimer.classList.remove("timer-big");
             if (document.fullscreenElement) document.exitFullscreen();
         }
