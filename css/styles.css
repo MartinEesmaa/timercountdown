@@ -1,6 +1,6 @@
 body {
     font-family: 'Share Tech Mono', monospace, 'Courier New', Courier, monospace;
-    background: #111;
+    background: #000;
     color: #33ff33;
 }
 
@@ -56,7 +56,7 @@ input:disabled {
     top: 0;
     right: 0;
     bottom: 0;
-    background: #111;
+    background: #000;
     width: 100vw;
     height: 100vh;
     justify-content: center;
